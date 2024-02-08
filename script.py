@@ -2,6 +2,10 @@ import requests;
 import socket
 import time;
 
+channel_id = "1204647940140826694";
+bot_token = "MTIwNTAzMzU4OTkzNTQ0NDAzOA.Gqup8l.qqEuzNTwelKZqHUWBYzX1PmgTY10oCVU7IGP6M";
+
+
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.settimeout(0)
@@ -15,23 +19,14 @@ def get_ip():
         s.close()
     return IP
 
-
-channel_id = None;
-bot_token = None;
-
-with open("config.txt", "r") as text:
-
-    content = text.readlines();
-
-    channel_id = content[0].split("=")[1].rstrip();
-    bot_token = content[1].split("=")[1].rstrip();
-
+if len(bot_token.split("Bot")) > 1:
+    bot_token = bot_token.split("Bot ")[len(bot_token.split("Bot ")) - 1];
 
 prev_address = None;
 
 while True:
 
-    time.sleep(3);
+    time.sleep(5);
 
     internet = False;
 
@@ -48,12 +43,10 @@ while True:
     address = get_ip();
 
     if prev_address != address:
-        requests.post("https://discord.com/api/v9/channels/" + channel_id + "/messages", headers={
-                "Accept": "*/*",
-                "Content-Type": "application/json",
-                "Authorization": bot_token,
-            },
-            json={"content":address},
-        )
 
+        baseURL = "https://discord.com/api/channels/" + channel_id + "/messages";
+        headers = { "Authorization":"Bot " + bot_token,
+                    "Content-Type":"application/json", }
+
+        r = requests.post(baseURL, headers = headers, json={"content":address})
         prev_address = address;
